@@ -44,12 +44,12 @@ export default function Hero({ records }: { records: AccidentRecord[] }) {
     <section
       id="problem"
       style={{
-        minHeight: "100vh",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        paddingTop: "15vh",
-        paddingBottom: "10vh",
+        paddingTop: "8vh",
+        paddingBottom: "4vh",
       }}
     >
       <div className="content-wrap">

@@ -209,12 +209,12 @@ export default function FutureSafetyNetwork() {
     <section
       id="network"
       style={{
-        minHeight: "100vh",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        paddingTop: "15vh",
-        paddingBottom: "10vh",
+        paddingTop: "8vh",
+        paddingBottom: "4vh",
         borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >
@@ -249,7 +249,7 @@ export default function FutureSafetyNetwork() {
         {/* Category pills */}
         <div
           className="section-fade"
-          style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "56px" }}
+          style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "32px" }}
         >
           {CATEGORIES.map((cat) => (
             <button
@@ -268,7 +268,7 @@ export default function FutureSafetyNetwork() {
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
-            gap: "64px",
+            gap: "40px",
             alignItems: "start",
           }}
         >
@@ -328,6 +328,7 @@ export default function FutureSafetyNetwork() {
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );

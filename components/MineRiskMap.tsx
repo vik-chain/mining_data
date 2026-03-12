@@ -64,12 +64,12 @@ export default function MineRiskMap({ records }: { records: AccidentRecord[] }) 
     <section
       id="map"
       style={{
-        minHeight: "100vh",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        paddingTop: "15vh",
-        paddingBottom: "10vh",
+        paddingTop: "8vh",
+        paddingBottom: "4vh",
         borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >
@@ -93,7 +93,7 @@ export default function MineRiskMap({ records }: { records: AccidentRecord[] }) 
         </p>
 
         {/* Map */}
-        <div className="section-fade" style={{ position: "relative", marginBottom: "32px" }}>
+        <div className="section-fade" style={{ position: "relative", marginBottom: "32px", maxHeight: "460px", overflow: "hidden" }}>
           <ComposableMap
             projection="geoAlbersUsa"
             style={{ width: "100%", height: "auto" }}

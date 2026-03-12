@@ -1,5 +1,6 @@
 "use client";
 
+
 const IDEAS = [
   {
     number: "01",
@@ -32,19 +33,19 @@ export default function FutureSection() {
     <section
       id="future"
       style={{
-        minHeight: "100vh",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        paddingTop: "15vh",
-        paddingBottom: "10vh",
+        paddingTop: "8vh",
+        paddingBottom: "4vh",
         borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div className="content-wrap">
         {/* Label */}
         <p className="section-label section-fade" style={{ marginBottom: "24px" }}>
-          07 — Future
+          07 — Solution
         </p>
 
         <p
@@ -54,7 +55,7 @@ export default function FutureSection() {
             fontWeight: 300,
             color: "#f5f5f5",
             lineHeight: 1.2,
-            marginBottom: "80px",
+            marginBottom: "40px",
             maxWidth: "600px",
           }}
         >
@@ -74,8 +75,8 @@ export default function FutureSection() {
                 gridTemplateColumns: "80px 1fr 1fr",
                 gap: "32px",
                 alignItems: "start",
-                paddingTop: i === 0 ? 0 : "48px",
-                paddingBottom: "48px",
+                paddingTop: i === 0 ? 0 : "32px",
+                paddingBottom: "32px",
                 borderBottom: "1px solid rgba(255,255,255,0.06)",
               }}
             >
@@ -136,42 +137,6 @@ export default function FutureSection() {
           ))}
         </div>
 
-        {/* Closing statement */}
-        <div
-          className="section-fade"
-          style={{ marginTop: "100px", maxWidth: "560px" }}
-        >
-          <p
-            style={{
-              fontSize: "clamp(28px, 4vw, 40px)",
-              fontWeight: 300,
-              color: "#f5f5f5",
-              lineHeight: 1.3,
-              marginBottom: "16px",
-            }}
-          >
-            The data to save lives already exists.
-          </p>
-          <p style={{ color: "#555", fontSize: "16px" }}>
-            The question is whether we act on it.
-          </p>
-        </div>
-
-        {/* Footer */}
-        <p
-          className="section-fade"
-          style={{
-            marginTop: "80px",
-            paddingTop: "40px",
-            borderTop: "1px solid rgba(255,255,255,0.06)",
-            color: "#333",
-            fontSize: "12px",
-            letterSpacing: "0.04em",
-          }}
-        >
-          Built with synthetic MSHA data for analytical demonstration. Data
-          structure is compatible with real MSHA Part 50 exports.
-        </p>
       </div>
     </section>
   );

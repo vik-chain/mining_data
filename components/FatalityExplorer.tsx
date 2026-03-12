@@ -158,12 +158,12 @@ export default function FatalityExplorer({
     <section
       id="data"
       style={{
-        minHeight: "100vh",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        paddingTop: "15vh",
-        paddingBottom: "10vh",
+        paddingTop: "8vh",
+        paddingBottom: "4vh",
         borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >
@@ -174,7 +174,7 @@ export default function FatalityExplorer({
         </p>
 
         {/* Insight headline */}
-        <p className="section-fade" style={{ fontSize: "clamp(28px,4vw,42px)", fontWeight: 300, color: "#f5f5f5", lineHeight: 1.2, marginBottom: "48px", maxWidth: "680px" }}>
+        <p className="section-fade" style={{ fontSize: "clamp(18px,2.5vw,26px)", fontWeight: 300, color: "#f5f5f5", lineHeight: 1.2, marginBottom: "24px", maxWidth: "680px" }}>
           <span style={{ color: "#f97316" }}>{chartData[0]?.name ?? "—"}</span>
           {" "}is the leading cause of mining accidents in this dataset.
         </p>
@@ -221,6 +221,7 @@ export default function FatalityExplorer({
                 axisLine={false}
                 tickLine={false}
                 width={140}
+                interval={0}
               />
               <Tooltip
                 content={<CustomTooltip fatalOnly={fatalOnly} />}

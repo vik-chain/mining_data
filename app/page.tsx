@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { loadAccidents, type AccidentRecord } from "@/lib/csvLoader";
 import NavBar from "@/components/NavBar";
 import Hero from "@/components/Hero";
@@ -13,7 +13,7 @@ import PreventionPanel from "@/components/PreventionPanel";
 import FutureSection from "@/components/FutureSection";
 import MineRiskMap from "@/components/MineRiskMap";
 import FutureSafetyNetwork from "@/components/FutureSafetyNetwork";
-import NarrativeBridge from "@/components/NarrativeBridge";
+import FixedArrow from "@/components/FixedArrow";
 
 const DEFAULT_DRIVERS: RiskDrivers = {
   accidents: 5,
@@ -63,7 +63,6 @@ export default function Home() {
   const [records, setRecords] = useState<AccidentRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [riskDrivers, setRiskDrivers] = useState<RiskDrivers>(DEFAULT_DRIVERS);
-  const lenisRef = useRef<import("lenis").default | null>(null);
 
   // Load CSV data
   useEffect(() => {
@@ -77,29 +76,6 @@ export default function Home() {
         setLoading(false);
       });
   }, []);
-
-  // Lenis smooth scroll
-  useEffect(() => {
-    if (loading) return;
-
-    let raf: number;
-    import("lenis").then(({ default: Lenis }) => {
-      const lenis = new Lenis({ lerp: 0.08, duration: 1.2 });
-      lenisRef.current = lenis;
-
-      const animate = (time: number) => {
-        lenis.raf(time);
-        raf = requestAnimationFrame(animate);
-      };
-      raf = requestAnimationFrame(animate);
-    });
-
-    return () => {
-      cancelAnimationFrame(raf);
-      lenisRef.current?.destroy();
-      lenisRef.current = null;
-    };
-  }, [loading]);
 
   // Section fade-in via IntersectionObserver
   useEffect(() => {
@@ -130,38 +106,62 @@ export default function Home() {
   if (loading) return <SkeletonLoader />;
 
   return (
-    <main style={{ background: "#0a0a0a", minHeight: "100vh" }}>
+    <main style={{ background: "#0a0a0a" }}>
       <NavBar />
+      <FixedArrow />
 
       <Hero records={records} />
-
-      <NarrativeBridge text="The data to prevent it already exists." />
-
       <FatalityExplorer records={records} />
-
-      <NarrativeBridge text="The patterns are clear. But buried in fragmented tools." />
-
       <RiskScoreCalculator onDriversChange={handleDriversChange} />
-
-      <NarrativeBridge text="Risk isn't evenly distributed across the country." />
-
       <MineRiskMap records={records} />
-
-      <NarrativeBridge text="Now see what that means for inspection strategy." />
-
       <InspectionSimulator />
-
-      <NarrativeBridge text="Smarter targeting changes the outcome." />
-
       <PreventionPanel riskDrivers={riskDrivers} />
-
-      <NarrativeBridge text="This isn't hypothetical. It's buildable." />
-
       <FutureSection />
-
-      <NarrativeBridge text="But detecting patterns after the fact is only half the answer." />
-
       <FutureSafetyNetwork />
+
+      <section
+        id="closing"
+        style={{
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          paddingTop: "8vh",
+          paddingBottom: "4vh",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
+        <div className="content-wrap">
+          <p
+            style={{
+              fontSize: "clamp(28px,4vw,48px)",
+              fontWeight: 300,
+              color: "#f5f5f5",
+              lineHeight: 1.3,
+              marginBottom: "16px",
+              maxWidth: "560px",
+            }}
+          >
+            The data to save lives already exists.
+          </p>
+          <p style={{ color: "#555", fontSize: "16px" }}>
+            The question is whether we act on it.
+          </p>
+          <p
+            style={{
+              marginTop: "80px",
+              paddingTop: "40px",
+              borderTop: "1px solid rgba(255,255,255,0.06)",
+              color: "#333",
+              fontSize: "12px",
+              letterSpacing: "0.04em",
+            }}
+          >
+            Built with synthetic MSHA data for analytical demonstration. Data
+            structure is compatible with real MSHA Part 50 exports.
+          </p>
+        </div>
+      </section>
     </main>
   );
 }

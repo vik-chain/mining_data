@@ -82,12 +82,12 @@ export default function RiskScoreCalculator({
     <section
       id="risk"
       style={{
-        minHeight: "100vh",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        paddingTop: "15vh",
-        paddingBottom: "10vh",
+        paddingTop: "8vh",
+        paddingBottom: "4vh",
         borderTop: "1px solid rgba(255,255,255,0.06)",
         background: "rgba(255,255,255,0.01)",
       }}

@@ -9,7 +9,7 @@ const sections = [
   { id: "map", label: "Map" },
   { id: "inspection", label: "Inspect" },
   { id: "prevention", label: "Prevent" },
-  { id: "future", label: "Future" },
+  { id: "future", label: "Solution" },
   { id: "network", label: "Network" },
 ];
 

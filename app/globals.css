@@ -14,6 +14,13 @@
 
 html {
   background-color: #0a0a0a;
+  scroll-snap-type: y mandatory;
+}
+
+section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
 }
 
 body {
@@ -63,12 +70,12 @@ body {
 /* ─── Section Layout ───────────────────────────────── */
 
 .editorial-section {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: 15vh;
-  padding-bottom: 10vh;
+  padding-top: 8vh;
+  padding-bottom: 4vh;
 }
 
 .content-wrap {
