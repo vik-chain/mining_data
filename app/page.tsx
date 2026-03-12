@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { loadFatalities, type FatalityRecord } from "@/lib/csvLoader";
+import { loadAccidents, type AccidentRecord } from "@/lib/csvLoader";
 import NavBar from "@/components/NavBar";
 import Hero from "@/components/Hero";
 import FatalityExplorer from "@/components/FatalityExplorer";
@@ -34,18 +34,18 @@ function SkeletonLoader() {
 }
 
 export default function Home() {
-  const [records, setRecords] = useState<FatalityRecord[]>([]);
+  const [records, setRecords] = useState<AccidentRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [riskDrivers, setRiskDrivers] = useState<RiskDrivers>(DEFAULT_DRIVERS);
 
   useEffect(() => {
-    loadFatalities()
+    loadAccidents()
       .then((data) => {
         setRecords(data);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Failed to load fatalities CSV:", err);
+        console.error("Failed to load accidents CSV:", err);
         setLoading(false);
       });
   }, []);
@@ -82,7 +82,7 @@ export default function Home() {
       <NavBar />
 
       <div className="section-fade">
-        <Hero />
+        <Hero records={records} />
       </div>
 
       <div className="section-fade">

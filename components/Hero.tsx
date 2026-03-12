@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import type { AccidentRecord } from "@/lib/csvLoader";
 
 function AnimatedCounter({
   target,
@@ -45,10 +46,16 @@ function AnimatedCounter({
   );
 }
 
-export default function Hero() {
+export default function Hero({ records }: { records: AccidentRecord[] }) {
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const fatalCount = records.filter((r) => r.fatal).length;
+  const stateCount = new Set(records.map((r) => r.state)).size;
+  const years = records.map((r) => r.year);
+  const yearRange =
+    years.length > 0 ? Math.max(...years) - Math.min(...years) + 1 : 0;
 
   return (
     <section
@@ -84,19 +91,19 @@ export default function Hero() {
           <div className="grid grid-cols-3 gap-6 mb-12 max-w-lg">
             <div className="border border-slate-700 rounded-lg p-4 bg-slate-800/50">
               <div className="text-3xl font-bold text-orange-400">
-                <AnimatedCounter target={97} />
+                <AnimatedCounter target={fatalCount} />
               </div>
               <div className="text-slate-400 text-xs mt-1">Fatal Incidents</div>
             </div>
             <div className="border border-slate-700 rounded-lg p-4 bg-slate-800/50">
               <div className="text-3xl font-bold text-orange-400">
-                <AnimatedCounter target={18} />
+                <AnimatedCounter target={stateCount} />
               </div>
               <div className="text-slate-400 text-xs mt-1">States</div>
             </div>
             <div className="border border-slate-700 rounded-lg p-4 bg-slate-800/50">
               <div className="text-3xl font-bold text-orange-400">
-                <AnimatedCounter target={5} />+
+                <AnimatedCounter target={yearRange} />
               </div>
               <div className="text-slate-400 text-xs mt-1">Years of Data</div>
             </div>

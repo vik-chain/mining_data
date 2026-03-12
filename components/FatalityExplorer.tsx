@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import type { FatalityRecord } from "@/lib/csvLoader";
+import type { AccidentRecord } from "@/lib/csvLoader";
 
 const ACCIDENT_SCENARIOS: Record<string, string[]> = {
   "Powered Haulage":
@@ -33,10 +33,12 @@ const CustomTooltip = ({
   active,
   payload,
   label,
+  fatalOnly,
 }: {
   active?: boolean;
   payload?: { value: number }[];
   label?: string;
+  fatalOnly?: boolean;
 }) => {
   if (active && payload && payload.length) {
     const scenarios = ACCIDENT_SCENARIOS[label ?? ""] ?? [];
@@ -44,7 +46,7 @@ const CustomTooltip = ({
       <div className="bg-slate-800 border border-slate-600 rounded-lg p-4 max-w-xs shadow-xl">
         <p className="text-white font-semibold mb-1">{label}</p>
         <p className="text-orange-400 text-2xl font-bold mb-2">
-          {payload[0].value} fatalities
+          {payload[0].value} {fatalOnly ? "fatal incidents" : "accidents"}
         </p>
         {scenarios.length > 0 && (
           <>
@@ -67,22 +69,24 @@ const CustomTooltip = ({
   return null;
 };
 
+const MINE_TYPE_OPTIONS = [
+  { label: "All", value: "All" },
+  { label: "Coal", value: "coal" },
+  { label: "Metal/Nonmetal", value: "metal_nonmetal" },
+];
+
 export default function FatalityExplorer({
   records,
 }: {
-  records: FatalityRecord[];
+  records: AccidentRecord[];
 }) {
   const [mineType, setMineType] = useState("All");
   const [state, setState] = useState("All");
-  const [commodity, setCommodity] = useState("All");
+  const [fatalOnly, setFatalOnly] = useState(false);
   const [selectedBar, setSelectedBar] = useState<string | null>(null);
 
   const states = useMemo(
     () => ["All", ...Array.from(new Set(records.map((r) => r.state))).sort()],
-    [records]
-  );
-  const commodities = useMemo(
-    () => ["All", ...Array.from(new Set(records.map((r) => r.commodity))).sort()],
     [records]
   );
 
@@ -90,31 +94,29 @@ export default function FatalityExplorer({
     return records.filter((r) => {
       if (mineType !== "All" && r.mine_type !== mineType) return false;
       if (state !== "All" && r.state !== state) return false;
-      if (commodity !== "All" && r.commodity !== commodity) return false;
+      if (fatalOnly && !r.fatal) return false;
       return true;
     });
-  }, [records, mineType, state, commodity]);
+  }, [records, mineType, state, fatalOnly]);
 
   const chartData = useMemo(() => {
     const totals: Record<string, number> = {};
     filtered.forEach((r) => {
-      totals[r.accident_class] = (totals[r.accident_class] ?? 0) + r.fatalities;
+      totals[r.accident_category] = (totals[r.accident_category] ?? 0) + 1;
     });
     return Object.entries(totals)
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value);
   }, [filtered]);
 
-  const totalFatalities = records.reduce((s, r) => s + r.fatalities, 0);
-  const filteredFatalities = filtered.reduce((s, r) => s + r.fatalities, 0);
+  const totalAccidents = records.length;
+  const filteredCount = filtered.length;
+  const fatalInFiltered = filtered.filter((r) => r.fatal).length;
 
   const topTwo = chartData.slice(0, 2);
+  const topTwoTotal = topTwo.reduce((s, d) => s + d.value, 0);
   const topTwoPct =
-    filteredFatalities > 0
-      ? Math.round(
-          (topTwo.reduce((s, d) => s + d.value, 0) / filteredFatalities) * 100
-        )
-      : 0;
+    filteredCount > 0 ? Math.round((topTwoTotal / filteredCount) * 100) : 0;
 
   const ToggleBtn = ({
     label,
@@ -146,27 +148,46 @@ export default function FatalityExplorer({
           02 / Patterns
         </p>
         <h2 className="text-4xl md:text-5xl font-bold text-white mb-3">
-          Fatality Pattern Explorer
+          Accident Pattern Explorer
         </h2>
         <p className="text-slate-400 text-lg mb-10 max-w-2xl">
-          Not all accidents are equal. A small set of accident classes drive the
-          majority of deaths — and they cluster around specific mine types and
-          commodities.
+          Not all accidents are equal. A small set of accident categories drive
+          the majority of incidents — and they cluster around specific mine types
+          and states.
         </p>
 
         {/* Filters */}
         <div className="flex flex-wrap gap-4 mb-6 items-center">
+          {/* Fatal / All toggle */}
           <div className="flex gap-2">
-            {["All", "Surface", "Underground"].map((v) => (
+            <ToggleBtn
+              label="All Accidents"
+              value="all"
+              active={!fatalOnly}
+              onClick={() => setFatalOnly(false)}
+            />
+            <ToggleBtn
+              label="Fatal Only"
+              value="fatal"
+              active={fatalOnly}
+              onClick={() => setFatalOnly(true)}
+            />
+          </div>
+
+          {/* Mine type */}
+          <div className="flex gap-2">
+            {MINE_TYPE_OPTIONS.map(({ label, value }) => (
               <ToggleBtn
-                key={v}
-                label={v}
-                value={v}
-                active={mineType === v}
+                key={value}
+                label={label}
+                value={value}
+                active={mineType === value}
                 onClick={setMineType}
               />
             ))}
           </div>
+
+          {/* State dropdown */}
           <select
             value={state}
             onChange={(e) => setState(e.target.value)}
@@ -178,34 +199,34 @@ export default function FatalityExplorer({
               </option>
             ))}
           </select>
-          <select
-            value={commodity}
-            onChange={(e) => setCommodity(e.target.value)}
-            className="bg-slate-700 text-slate-300 border border-slate-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-          >
-            {commodities.map((c) => (
-              <option key={c} value={c}>
-                {c === "All" ? "All Commodities" : c}
-              </option>
-            ))}
-          </select>
         </div>
 
         {/* Counters */}
-        <div className="flex gap-6 mb-8">
+        <div className="flex flex-wrap gap-6 mb-8">
           <div className="text-slate-400 text-sm">
             <span className="text-white font-semibold text-lg">
-              {totalFatalities}
+              {totalAccidents.toLocaleString()}
             </span>{" "}
-            total fatalities analyzed
+            total accidents analyzed
           </div>
           <div className="text-slate-600">·</div>
           <div className="text-slate-400 text-sm">
             <span className="text-orange-400 font-semibold text-lg">
-              {filteredFatalities}
+              {filteredCount.toLocaleString()}
             </span>{" "}
             matching filters
           </div>
+          {fatalOnly && (
+            <>
+              <div className="text-slate-600">·</div>
+              <div className="text-slate-400 text-sm">
+                <span className="text-red-400 font-semibold text-lg">
+                  {fatalInFiltered.toLocaleString()}
+                </span>{" "}
+                fatalities in filtered set
+              </div>
+            </>
+          )}
         </div>
 
         {/* Chart */}
@@ -235,7 +256,10 @@ export default function FatalityExplorer({
                 tickLine={false}
                 width={130}
               />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(249,115,22,0.08)" }} />
+              <Tooltip
+                content={<CustomTooltip fatalOnly={fatalOnly} />}
+                cursor={{ fill: "rgba(249,115,22,0.08)" }}
+              />
               <Bar
                 dataKey="value"
                 radius={[0, 4, 4, 0]}
@@ -273,9 +297,9 @@ export default function FatalityExplorer({
                 </strong>{" "}
                 account for{" "}
                 <strong className="text-orange-400">{topTwoPct}%</strong> of
-                all fatalities in the selected filter. These two categories
-                alone represent the highest-leverage intervention points for
-                MSHA inspectors.
+                all {fatalOnly ? "fatal incidents" : "accidents"} in the
+                selected filter. These two categories alone represent the
+                highest-leverage intervention points for MSHA inspectors.
               </p>
             </div>
           </div>
