@@ -11,6 +11,8 @@ import RiskScoreCalculator, {
 import InspectionSimulator from "@/components/InspectionSimulator";
 import PreventionPanel from "@/components/PreventionPanel";
 import FutureSection from "@/components/FutureSection";
+import MineRiskMap from "@/components/MineRiskMap";
+import FutureSafetyNetwork from "@/components/FutureSafetyNetwork";
 import NarrativeBridge from "@/components/NarrativeBridge";
 
 const DEFAULT_DRIVERS: RiskDrivers = {
@@ -141,7 +143,11 @@ export default function Home() {
 
       <RiskScoreCalculator onDriversChange={handleDriversChange} />
 
-      <NarrativeBridge text="Now imagine every inspector knowing this score." />
+      <NarrativeBridge text="Risk isn't evenly distributed across the country." />
+
+      <MineRiskMap records={records} />
+
+      <NarrativeBridge text="Now see what that means for inspection strategy." />
 
       <InspectionSimulator />
 
@@ -152,6 +158,10 @@ export default function Home() {
       <NarrativeBridge text="This isn't hypothetical. It's buildable." />
 
       <FutureSection />
+
+      <NarrativeBridge text="But detecting patterns after the fact is only half the answer." />
+
+      <FutureSafetyNetwork />
     </main>
   );
 }

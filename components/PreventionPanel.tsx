@@ -101,7 +101,7 @@ export default function PreventionPanel({
       <div className="content-wrap">
         {/* Label */}
         <p className="section-label section-fade" style={{ marginBottom: "24px" }}>
-          05 — Prevention
+          06 — Prevention
         </p>
 
         <p

@@ -17,7 +17,7 @@ export default function InspectionSimulator() {
       <div className="content-wrap">
         {/* Label */}
         <p className="section-label section-fade" style={{ marginBottom: "24px" }}>
-          04 — Inspections
+          05 — Inspections
         </p>
 
         <p

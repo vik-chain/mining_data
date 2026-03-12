@@ -174,18 +174,9 @@ export default function FatalityExplorer({
         </p>
 
         {/* Insight headline */}
-        <p
-          className="section-fade"
-          style={{
-            fontSize: "clamp(28px, 4vw, 42px)",
-            fontWeight: 300,
-            color: "#f5f5f5",
-            lineHeight: 1.2,
-            marginBottom: "48px",
-            maxWidth: "680px",
-          }}
-        >
-          Falls of roof or back kill more miners than any other cause.
+        <p className="section-fade" style={{ fontSize: "clamp(28px,4vw,42px)", fontWeight: 300, color: "#f5f5f5", lineHeight: 1.2, marginBottom: "48px", maxWidth: "680px" }}>
+          <span style={{ color: "#f97316" }}>{chartData[0]?.name ?? "—"}</span>
+          {" "}is the leading cause of mining accidents in this dataset.
         </p>
 
         {/* Pill filters */}

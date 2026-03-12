@@ -44,7 +44,7 @@ export default function FutureSection() {
       <div className="content-wrap">
         {/* Label */}
         <p className="section-label section-fade" style={{ marginBottom: "24px" }}>
-          06 — Future
+          07 — Future
         </p>
 
         <p
