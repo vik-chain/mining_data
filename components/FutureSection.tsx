@@ -2,108 +2,176 @@
 
 const IDEAS = [
   {
-    icon: "📋",
     number: "01",
     title: "Automated Incident Reporting",
     subtitle: "Replace Form 7000-1",
-    description:
-      "Form 7000-1, MSHA's primary fatality/injury report, is still submitted as paper or fax. A structured digital intake — integrated with mine operator systems — would eliminate transcription delays and enable real-time pattern detection the day an incident occurs.",
-    tags: ["Data Collection", "Automation", "Part 50"],
     impact: "2–3 day reporting lag → real-time",
+    description:
+      "Form 7000-1 is still submitted as paper or fax. A structured digital intake integrated with mine operator systems would enable real-time pattern detection the day an incident occurs.",
   },
   {
-    icon: "📡",
     number: "02",
     title: "Equipment Telemetry Integration",
     subtitle: "Real-Time Sensor Data",
-    description:
-      "Modern haul trucks and continuous miners ship with GPS, collision sensors, and load monitors. Integrating this telemetry stream with MSHA's risk platform would flag anomalies — unexpected stops, proximity violations, equipment failures — before they become fatalities.",
-    tags: ["IoT", "Telemetry", "Powered Haulage"],
     impact: "Reactive inspection → predictive alerting",
+    description:
+      "Modern haul trucks ship with GPS, collision sensors, and load monitors. Integrating this telemetry with MSHA's risk platform flags anomalies before they become fatalities.",
   },
   {
-    icon: "🔔",
     number: "03",
     title: "Real-Time Hazard Alerts",
     subtitle: "Inspector Push Notifications",
-    description:
-      "When a mine's risk score spikes — new S&S violations, a near-miss incident, or a sudden increase in complaint reports — inspectors in that district should receive an automated alert. The same way a bank flags unusual transactions, MSHA can flag unusual mine behavior.",
-    tags: ["Notifications", "Risk Monitoring", "Inspector Tooling"],
     impact: "Annual inspection cadence → event-driven response",
+    description:
+      "When a mine's risk score spikes — new S&S violations, a near-miss, or a sudden complaint surge — inspectors receive an automated alert. The same way a bank flags unusual transactions.",
   },
 ];
 
 export default function FutureSection() {
   return (
-    <section id="future" className="py-24 px-6">
-      <div className="max-w-7xl mx-auto">
-        <p className="text-orange-400 text-xs font-semibold tracking-[0.2em] uppercase mb-4">
-          06 / Future
-        </p>
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-3">
-          Where This Goes Next
-        </h2>
-        <p className="text-slate-400 text-lg mb-16 max-w-2xl">
-          The prototype above uses publicly available data and a simple risk
-          formula. Here&apos;s what a production-grade system would add.
+    <section
+      id="future"
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        paddingTop: "15vh",
+        paddingBottom: "10vh",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+      }}
+    >
+      <div className="content-wrap">
+        {/* Label */}
+        <p className="section-label section-fade" style={{ marginBottom: "24px" }}>
+          06 — Future
         </p>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-20">
-          {IDEAS.map((idea) => (
+        <p
+          className="section-fade"
+          style={{
+            fontSize: "clamp(28px, 4vw, 42px)",
+            fontWeight: 300,
+            color: "#f5f5f5",
+            lineHeight: 1.2,
+            marginBottom: "80px",
+            maxWidth: "600px",
+          }}
+        >
+          What the full system could look like.
+        </p>
+
+        {/* Three clean rows */}
+        <div
+          className="section-fade"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
+          {IDEAS.map((idea, i) => (
             <div
               key={idea.number}
-              className="bg-slate-800 border border-slate-700 rounded-xl p-6 flex flex-col hover:border-orange-500/40 transition-colors"
+              style={{
+                display: "grid",
+                gridTemplateColumns: "80px 1fr 1fr",
+                gap: "32px",
+                alignItems: "start",
+                paddingTop: i === 0 ? 0 : "48px",
+                paddingBottom: "48px",
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+              }}
             >
-              <div className="flex items-start justify-between mb-5">
-                <div className="text-4xl">{idea.icon}</div>
-                <span className="text-slate-700 text-5xl font-bold leading-none">
-                  {idea.number}
-                </span>
-              </div>
-              <p className="text-orange-400 text-xs font-semibold tracking-wide uppercase mb-1">
-                {idea.subtitle}
-              </p>
-              <h3 className="text-white font-bold text-xl mb-3">{idea.title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed flex-1 mb-5">
-                {idea.description}
-              </p>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {idea.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs bg-slate-700 text-slate-300 px-2.5 py-1 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <div className="border-t border-slate-700 pt-4">
-                <p className="text-slate-500 text-xs">Impact</p>
-                <p className="text-orange-400 text-sm font-medium mt-0.5">
+              {/* Number */}
+              <span
+                style={{
+                  fontSize: "11px",
+                  letterSpacing: "0.15em",
+                  color: "#333",
+                  fontWeight: 500,
+                  paddingTop: "4px",
+                }}
+              >
+                {idea.number}
+              </span>
+
+              {/* Title + subtitle */}
+              <div>
+                <p
+                  style={{
+                    fontSize: "10px",
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "#f97316",
+                    marginBottom: "8px",
+                  }}
+                >
+                  {idea.subtitle}
+                </p>
+                <h3
+                  style={{
+                    fontSize: "20px",
+                    fontWeight: 400,
+                    color: "#f5f5f5",
+                    lineHeight: 1.3,
+                    marginBottom: "8px",
+                  }}
+                >
+                  {idea.title}
+                </h3>
+                <p style={{ fontSize: "12px", color: "#f97316", fontStyle: "italic" }}>
                   {idea.impact}
                 </p>
               </div>
+
+              {/* Description */}
+              <p
+                style={{
+                  color: "#666",
+                  fontSize: "14px",
+                  lineHeight: 1.8,
+                  paddingTop: "4px",
+                }}
+              >
+                {idea.description}
+              </p>
             </div>
           ))}
         </div>
 
         {/* Closing statement */}
-        <div className="border border-orange-500/30 bg-orange-500/5 rounded-2xl p-10 text-center max-w-3xl mx-auto">
-          <p className="text-3xl md:text-4xl font-bold text-white leading-tight mb-4">
+        <div
+          className="section-fade"
+          style={{ marginTop: "100px", maxWidth: "560px" }}
+        >
+          <p
+            style={{
+              fontSize: "clamp(28px, 4vw, 40px)",
+              fontWeight: 300,
+              color: "#f5f5f5",
+              lineHeight: 1.3,
+              marginBottom: "16px",
+            }}
+          >
             The data to save lives already exists.
           </p>
-          <p className="text-slate-400 text-lg">
+          <p style={{ color: "#555", fontSize: "16px" }}>
             The question is whether we act on it.
           </p>
         </div>
 
         {/* Footer */}
-        <div className="mt-20 pt-10 border-t border-slate-800 text-center text-slate-600 text-sm">
-          <p>
-            Built with synthetic MSHA data for analytical demonstration purposes.
-            Data structure is fully compatible with real MSHA Part 50 exports.
-          </p>
-        </div>
+        <p
+          className="section-fade"
+          style={{
+            marginTop: "80px",
+            paddingTop: "40px",
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            color: "#333",
+            fontSize: "12px",
+            letterSpacing: "0.04em",
+          }}
+        >
+          Built with synthetic MSHA data for analytical demonstration. Data
+          structure is compatible with real MSHA Part 50 exports.
+        </p>
       </div>
     </section>
   );

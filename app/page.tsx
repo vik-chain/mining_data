@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { loadAccidents, type AccidentRecord } from "@/lib/csvLoader";
 import NavBar from "@/components/NavBar";
 import Hero from "@/components/Hero";
@@ -11,6 +11,7 @@ import RiskScoreCalculator, {
 import InspectionSimulator from "@/components/InspectionSimulator";
 import PreventionPanel from "@/components/PreventionPanel";
 import FutureSection from "@/components/FutureSection";
+import NarrativeBridge from "@/components/NarrativeBridge";
 
 const DEFAULT_DRIVERS: RiskDrivers = {
   accidents: 5,
@@ -21,13 +22,36 @@ const DEFAULT_DRIVERS: RiskDrivers = {
 
 function SkeletonLoader() {
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-      <div className="text-center space-y-4 px-6 max-w-md w-full">
-        <div className="skeleton mx-auto rounded" style={{ height: "2rem", width: "66%" }} />
-        <div className="skeleton rounded" style={{ height: "1rem", width: "100%" }} />
-        <div className="skeleton mx-auto rounded" style={{ height: "1rem", width: "80%" }} />
-        <div className="skeleton mx-auto rounded" style={{ height: "1rem", width: "75%" }} />
-        <p className="text-slate-600 text-sm mt-8">Loading data...</p>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#0a0a0a",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+          width: "320px",
+        }}
+      >
+        <div className="skeleton" style={{ height: "32px", width: "66%" }} />
+        <div className="skeleton" style={{ height: "14px", width: "100%" }} />
+        <div className="skeleton" style={{ height: "14px", width: "80%" }} />
+        <p
+          style={{
+            color: "#333",
+            fontSize: "12px",
+            marginTop: "16px",
+            letterSpacing: "0.08em",
+          }}
+        >
+          Loading data...
+        </p>
       </div>
     </div>
   );
@@ -37,7 +61,9 @@ export default function Home() {
   const [records, setRecords] = useState<AccidentRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [riskDrivers, setRiskDrivers] = useState<RiskDrivers>(DEFAULT_DRIVERS);
+  const lenisRef = useRef<import("lenis").default | null>(null);
 
+  // Load CSV data
   useEffect(() => {
     loadAccidents()
       .then((data) => {
@@ -50,6 +76,30 @@ export default function Home() {
       });
   }, []);
 
+  // Lenis smooth scroll
+  useEffect(() => {
+    if (loading) return;
+
+    let raf: number;
+    import("lenis").then(({ default: Lenis }) => {
+      const lenis = new Lenis({ lerp: 0.08, duration: 1.2 });
+      lenisRef.current = lenis;
+
+      const animate = (time: number) => {
+        lenis.raf(time);
+        raf = requestAnimationFrame(animate);
+      };
+      raf = requestAnimationFrame(animate);
+    });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      lenisRef.current?.destroy();
+      lenisRef.current = null;
+    };
+  }, [loading]);
+
+  // Section fade-in via IntersectionObserver
   useEffect(() => {
     if (loading) return;
     const timer = setTimeout(() => {
@@ -78,32 +128,30 @@ export default function Home() {
   if (loading) return <SkeletonLoader />;
 
   return (
-    <main className="min-h-screen bg-slate-900">
+    <main style={{ background: "#0a0a0a", minHeight: "100vh" }}>
       <NavBar />
 
-      <div className="section-fade">
-        <Hero records={records} />
-      </div>
+      <Hero records={records} />
 
-      <div className="section-fade">
-        <FatalityExplorer records={records} />
-      </div>
+      <NarrativeBridge text="The data to prevent it already exists." />
 
-      <div className="section-fade">
-        <RiskScoreCalculator onDriversChange={handleDriversChange} />
-      </div>
+      <FatalityExplorer records={records} />
 
-      <div className="section-fade">
-        <InspectionSimulator />
-      </div>
+      <NarrativeBridge text="The patterns are clear. But buried in fragmented tools." />
 
-      <div className="section-fade">
-        <PreventionPanel riskDrivers={riskDrivers} />
-      </div>
+      <RiskScoreCalculator onDriversChange={handleDriversChange} />
 
-      <div className="section-fade">
-        <FutureSection />
-      </div>
+      <NarrativeBridge text="Now imagine every inspector knowing this score." />
+
+      <InspectionSimulator />
+
+      <NarrativeBridge text="Smarter targeting changes the outcome." />
+
+      <PreventionPanel riskDrivers={riskDrivers} />
+
+      <NarrativeBridge text="This isn't hypothetical. It's buildable." />
+
+      <FutureSection />
     </main>
   );
 }

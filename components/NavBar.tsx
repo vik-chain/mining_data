@@ -3,36 +3,27 @@
 import { useEffect, useState } from "react";
 
 const sections = [
-  { id: "hero", label: "Problem" },
-  { id: "explorer", label: "Patterns" },
-  { id: "risk", label: "Risk Score" },
-  { id: "simulator", label: "Inspections" },
-  { id: "prevention", label: "Prevention" },
+  { id: "problem", label: "Problem" },
+  { id: "data", label: "Data" },
+  { id: "risk", label: "Risk" },
+  { id: "inspection", label: "Inspect" },
+  { id: "prevention", label: "Prevent" },
   { id: "future", label: "Future" },
 ];
 
 export default function NavBar() {
-  const [activeSection, setActiveSection] = useState("hero");
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState("problem");
 
   useEffect(() => {
     const handleScroll = () => {
-      const docEl = document.documentElement;
-      const scrollTop = window.scrollY;
-      const scrollHeight = docEl.scrollHeight - docEl.clientHeight;
-      const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-      setScrollProgress(progress);
-
-      // Determine active section
       for (const section of [...sections].reverse()) {
         const el = document.getElementById(section.id);
-        if (el && el.getBoundingClientRect().top <= 120) {
+        if (el && el.getBoundingClientRect().top <= 140) {
           setActiveSection(section.id);
           break;
         }
       }
     };
-
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -42,39 +33,66 @@ export default function NavBar() {
   };
 
   return (
-    <>
-      <div
-        id="scroll-progress"
-        style={{ width: `${scrollProgress}%` }}
-      />
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+    <nav
+      style={{
+        position: "fixed",
+        top: "24px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 100,
+        display: "flex",
+        alignItems: "center",
+        gap: "4px",
+        background: "rgba(10,10,10,0.85)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "999px",
+        padding: "6px 8px",
+      }}
+    >
+      {sections.map((s) => {
+        const isActive = activeSection === s.id;
+        return (
           <button
-            onClick={() => scrollTo("hero")}
-            className="text-white font-semibold text-sm tracking-wide hover:text-orange-400 transition-colors"
+            key={s.id}
+            onClick={() => scrollTo(s.id)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "4px 12px",
+              borderRadius: "999px",
+              border: "none",
+              background: isActive ? "rgba(249,115,22,0.15)" : "transparent",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
           >
-            MSHA Analytics
+            <span
+              style={{
+                width: "5px",
+                height: "5px",
+                borderRadius: "50%",
+                background: isActive ? "#f97316" : "rgba(255,255,255,0.2)",
+                transition: "background 0.2s ease",
+                flexShrink: 0,
+              }}
+            />
+            <span
+              style={{
+                fontSize: "10px",
+                fontWeight: 500,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: isActive ? "#f97316" : "#555",
+                transition: "color 0.2s ease",
+              }}
+            >
+              {s.label}
+            </span>
           </button>
-          <div className="hidden md:flex items-center gap-6">
-            {sections.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => scrollTo(s.id)}
-                className={`text-xs font-medium tracking-wide transition-colors flex items-center gap-1.5 ${
-                  activeSection === s.id
-                    ? "text-orange-400"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                {activeSection === s.id && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-400 inline-block" />
-                )}
-                {s.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </nav>
-    </>
+        );
+      })}
+    </nav>
   );
 }

@@ -16,17 +16,15 @@ function useAnimatedNumber(target: number, duration = 400) {
 
   useEffect(() => {
     const from = prevRef.current;
-    const to = target;
     prevRef.current = target;
-
     if (animRef.current) cancelAnimationFrame(animRef.current);
     const start = performance.now();
     const animate = (now: number) => {
       const p = Math.min((now - start) / duration, 1);
       const eased = p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p;
-      setDisplay(Math.round(from + (to - from) * eased));
+      setDisplay(Math.round(from + (target - from) * eased));
       if (p < 1) animRef.current = requestAnimationFrame(animate);
-      else setDisplay(to);
+      else setDisplay(target);
     };
     animRef.current = requestAnimationFrame(animate);
     return () => {
@@ -38,9 +36,9 @@ function useAnimatedNumber(target: number, duration = 400) {
 }
 
 const RISK_LEVELS = [
-  { max: 30, label: "Low Risk", color: "#22c55e", bg: "bg-green-900/30", border: "border-green-500/40" },
-  { max: 60, label: "Moderate Risk", color: "#eab308", bg: "bg-yellow-900/30", border: "border-yellow-500/40" },
-  { max: Infinity, label: "High Risk", color: "#ef4444", bg: "bg-red-900/30", border: "border-red-500/40" },
+  { max: 30, label: "Low Risk", color: "#22c55e" },
+  { max: 60, label: "Moderate Risk", color: "#eab308" },
+  { max: Infinity, label: "High Risk", color: "#ef4444" },
 ];
 
 function getRiskLevel(score: number) {
@@ -61,16 +59,17 @@ export default function RiskScoreCalculator({
   const ssContrib = ssViolations * 3;
   const haulageContrib = hasHaulage ? 8 : 0;
   const undergroundContrib = isUnderground ? 4 : 0;
-  const totalScore = accidentContrib + ssContrib + haulageContrib + undergroundContrib;
+  const totalScore =
+    accidentContrib + ssContrib + haulageContrib + undergroundContrib;
 
   const animatedScore = useAnimatedNumber(totalScore);
   const riskLevel = getRiskLevel(totalScore);
 
   const drivers = [
-    { label: "Recent Accidents", value: accidentContrib, raw: accidents },
-    { label: "S&S Violations", value: ssContrib, raw: ssViolations },
-    { label: "Powered Haulage", value: haulageContrib, raw: hasHaulage ? 1 : 0 },
-    { label: "Underground Mine", value: undergroundContrib, raw: isUnderground ? 1 : 0 },
+    { label: "Recent accidents", value: accidentContrib },
+    { label: "S&S violations", value: ssContrib },
+    { label: "Powered haulage equipment", value: haulageContrib },
+    { label: "Underground operation", value: undergroundContrib },
   ]
     .filter((d) => d.value > 0)
     .sort((a, b) => b.value - a.value);
@@ -79,190 +78,260 @@ export default function RiskScoreCalculator({
     onDriversChange({ accidents, ssViolations, hasHaulage, isUnderground });
   }, [accidents, ssViolations, hasHaulage, isUnderground, onDriversChange]);
 
-  const Slider = ({
-    label,
-    min,
-    max,
-    value,
-    onChange,
-    description,
-  }: {
-    label: string;
-    min: number;
-    max: number;
-    value: number;
-    onChange: (v: number) => void;
-    description: string;
-  }) => (
-    <div>
-      <div className="flex justify-between items-center mb-2">
-        <label className="text-white font-medium text-sm">{label}</label>
-        <span className="text-orange-400 font-bold text-lg w-10 text-right">
-          {value}
-        </span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-orange-500 h-1.5 rounded bg-slate-600 appearance-none cursor-pointer"
-      />
-      <p className="text-slate-500 text-xs mt-1">{description}</p>
-    </div>
-  );
-
-  const Toggle = ({
-    label,
-    value,
-    onChange,
-    description,
-  }: {
-    label: string;
-    value: boolean;
-    onChange: (v: boolean) => void;
-    description: string;
-  }) => (
-    <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg border border-slate-600">
-      <div>
-        <p className="text-white font-medium text-sm">{label}</p>
-        <p className="text-slate-500 text-xs mt-0.5">{description}</p>
-      </div>
-      <button
-        onClick={() => onChange(!value)}
-        className={`relative w-12 h-6 rounded-full transition-colors ${
-          value ? "bg-orange-500" : "bg-slate-600"
-        }`}
-      >
-        <span
-          className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-            value ? "translate-x-7" : "translate-x-1"
-          }`}
-        />
-      </button>
-    </div>
-  );
-
   return (
-    <section id="risk" className="py-24 px-6 bg-slate-800/30">
-      <div className="max-w-7xl mx-auto">
-        <p className="text-orange-400 text-xs font-semibold tracking-[0.2em] uppercase mb-4">
-          03 / Risk Score
+    <section
+      id="risk"
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        paddingTop: "15vh",
+        paddingBottom: "10vh",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+        background: "rgba(255,255,255,0.01)",
+      }}
+    >
+      <div className="content-wrap">
+        {/* Label */}
+        <p className="section-label section-fade" style={{ marginBottom: "24px" }}>
+          03 — Risk Profile
         </p>
-        <h2 className="text-4xl md:text-5xl font-bold text-white mb-3">
-          Mine Risk Score Calculator
-        </h2>
-        <p className="text-slate-400 text-lg mb-4 max-w-2xl">
-          Today, MSHA&apos;s Part 50 incident reports, S&amp;S violation records, and
-          Pattern of Violations data live in separate silos. Cross-referencing
-          them manually takes hours. This calculator shows what a unified risk
-          signal could look like.
-        </p>
-        <div className="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4 mb-10 max-w-2xl">
-          <p className="text-slate-400 text-sm">
-            <strong className="text-white">Formula:</strong>{" "}
-            <code className="text-orange-300 bg-slate-800 px-1 rounded">
-              Score = (Accidents × 5) + (S&S Violations × 3) + (Haulage ? 8 : 0) + (Underground ? 4 : 0)
-            </code>
-          </p>
-        </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Inputs */}
-          <div className="bg-slate-800 border border-slate-700 rounded-xl p-8 space-y-8">
-            <Slider
-              label="Recent Accidents (12 months)"
-              min={0}
-              max={20}
-              value={accidents}
-              onChange={setAccidents}
-              description="Part 50 reportable incidents at this mine"
-            />
-            <Slider
-              label="S&S Violations (12 months)"
-              min={0}
-              max={50}
-              value={ssViolations}
-              onChange={setSsViolations}
-              description="Significant & Substantial violations from inspection records"
-            />
-            <Toggle
-              label="Powered Haulage Equipment"
-              value={hasHaulage}
-              onChange={setHasHaulage}
-              description="Haul trucks, conveyors, or other haulage systems on site"
-            />
-            <Toggle
-              label="Underground Mine"
-              value={isUnderground}
-              onChange={setIsUnderground}
-              description="Underground operations carry additional roof and gas hazards"
-            />
+        <p
+          className="section-fade"
+          style={{
+            fontSize: "clamp(28px, 4vw, 42px)",
+            fontWeight: 300,
+            color: "#f5f5f5",
+            lineHeight: 1.2,
+            marginBottom: "64px",
+            maxWidth: "600px",
+          }}
+        >
+          Every mine has a calculable risk profile.
+        </p>
+
+        {/* Two-column layout */}
+        <div
+          className="section-fade"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "64px",
+            alignItems: "start",
+          }}
+        >
+          {/* Left: inputs */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
+            {/* Slider: Accidents */}
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "12px",
+                }}
+              >
+                <label
+                  style={{ color: "#888", fontSize: "13px", letterSpacing: "0.04em" }}
+                >
+                  Recent Accidents
+                </label>
+                <span
+                  style={{ color: "#f97316", fontWeight: 700, fontSize: "16px" }}
+                >
+                  {accidents}
+                </span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={20}
+                value={accidents}
+                onChange={(e) => setAccidents(Number(e.target.value))}
+              />
+            </div>
+
+            {/* Slider: S&S Violations */}
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "12px",
+                }}
+              >
+                <label
+                  style={{ color: "#888", fontSize: "13px", letterSpacing: "0.04em" }}
+                >
+                  S&amp;S Violations
+                </label>
+                <span
+                  style={{ color: "#f97316", fontWeight: 700, fontSize: "16px" }}
+                >
+                  {ssViolations}
+                </span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={50}
+                value={ssViolations}
+                onChange={(e) => setSsViolations(Number(e.target.value))}
+              />
+            </div>
+
+            {/* Toggle: Haulage */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span style={{ color: "#888", fontSize: "13px" }}>
+                Powered Haulage Equipment
+              </span>
+              <button
+                onClick={() => setHasHaulage(!hasHaulage)}
+                style={{
+                  position: "relative",
+                  width: "44px",
+                  height: "24px",
+                  borderRadius: "12px",
+                  background: hasHaulage ? "#f97316" : "#222",
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "background 0.2s",
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "4px",
+                    left: hasHaulage ? "24px" : "4px",
+                    width: "16px",
+                    height: "16px",
+                    borderRadius: "50%",
+                    background: "#fff",
+                    transition: "left 0.2s",
+                  }}
+                />
+              </button>
+            </div>
+
+            {/* Toggle: Underground */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span style={{ color: "#888", fontSize: "13px" }}>
+                Underground Mine
+              </span>
+              <button
+                onClick={() => setIsUnderground(!isUnderground)}
+                style={{
+                  position: "relative",
+                  width: "44px",
+                  height: "24px",
+                  borderRadius: "12px",
+                  background: isUnderground ? "#f97316" : "#222",
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "background 0.2s",
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "4px",
+                    left: isUnderground ? "24px" : "4px",
+                    width: "16px",
+                    height: "16px",
+                    borderRadius: "50%",
+                    background: "#fff",
+                    transition: "left 0.2s",
+                  }}
+                />
+              </button>
+            </div>
           </div>
 
-          {/* Output */}
-          <div className="flex flex-col gap-6">
-            {/* Score display */}
-            <div
-              className={`${riskLevel.bg} ${riskLevel.border} border rounded-xl p-8 flex flex-col items-center justify-center`}
-            >
-              <p className="text-slate-400 text-sm mb-4 uppercase tracking-wide">
-                Risk Score
-              </p>
+          {/* Right: score output */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "32px",
+            }}
+          >
+            {/* Big score number */}
+            <div>
               <div
-                className="text-8xl font-bold mb-4 transition-colors duration-300"
-                style={{ color: riskLevel.color }}
+                style={{
+                  fontSize: "clamp(80px, 10vw, 120px)",
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  color: riskLevel.color,
+                  transition: "color 0.4s ease",
+                  fontVariantNumeric: "tabular-nums",
+                }}
               >
                 {animatedScore}
               </div>
-              <div
-                className="px-4 py-1.5 rounded-full text-sm font-semibold"
+              <p
                 style={{
-                  backgroundColor: riskLevel.color + "22",
+                  fontSize: "12px",
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
                   color: riskLevel.color,
-                  border: `1px solid ${riskLevel.color}44`,
+                  marginTop: "12px",
+                  transition: "color 0.4s ease",
                 }}
               >
                 {riskLevel.label}
-              </div>
+              </p>
             </div>
 
-            {/* Contribution breakdown */}
-            {totalScore > 0 && (
-              <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-                <p className="text-white font-semibold mb-4 text-sm">
-                  Risk Factor Breakdown
+            {/* Top driver bullets */}
+            {drivers.length > 0 && (
+              <div
+                style={{
+                  borderTop: "1px solid rgba(255,255,255,0.06)",
+                  paddingTop: "24px",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "10px",
+                    letterSpacing: "0.2em",
+                    textTransform: "uppercase",
+                    color: "#444",
+                    marginBottom: "16px",
+                  }}
+                >
+                  Top Drivers
                 </p>
-                <div className="space-y-3">
-                  {drivers.map((d) => {
-                    const pct = Math.round((d.value / totalScore) * 100);
-                    return (
-                      <div key={d.label}>
-                        <div className="flex justify-between text-xs mb-1">
-                          <span className="text-slate-300">{d.label}</span>
-                          <span className="text-orange-400 font-medium">
-                            +{d.value} ({pct}%)
-                          </span>
-                        </div>
-                        <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-orange-500 rounded-full transition-all duration-500"
-                            style={{ width: `${pct}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="mt-5 pt-4 border-t border-slate-700">
-                  <p className="text-slate-400 text-xs font-medium mb-2 uppercase tracking-wide">
-                    Top Risk Drivers
-                  </p>
-                  {drivers.slice(0, 2).map((d, i) => (
-                    <div key={d.label} className="flex items-center gap-2 text-sm mb-1">
-                      <span className="text-orange-400 font-bold">#{i + 1}</span>
-                      <span className="text-white">{d.label}</span>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {drivers.slice(0, 3).map((d) => (
+                    <div
+                      key={d.label}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
+                        color: "#888",
+                        fontSize: "14px",
+                      }}
+                    >
+                      <span style={{ color: "#f97316", fontWeight: 700 }}>—</span>
+                      {d.label}
                     </div>
                   ))}
                 </div>
