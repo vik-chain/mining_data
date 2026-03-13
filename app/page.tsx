@@ -126,23 +126,10 @@ export default function Home() {
               maxWidth: "560px",
             }}
           >
-            The data to save lives already exists.
+            The data is already being collected.
           </p>
           <p style={{ color: "#555", fontSize: "16px" }}>
-            The question is whether we act on it.
-          </p>
-          <p
-            style={{
-              marginTop: "80px",
-              paddingTop: "40px",
-              borderTop: "1px solid rgba(255,255,255,0.06)",
-              color: "#333",
-              fontSize: "12px",
-              letterSpacing: "0.04em",
-            }}
-          >
-            Built with synthetic MSHA data for analytical demonstration. Data
-            structure is compatible with real MSHA Part 50 exports.
+            The opportunity is in how we use it.
           </p>
         </div>
       </section>
