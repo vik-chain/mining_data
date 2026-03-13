@@ -35,6 +35,7 @@ function AnimatedCounter({
 
 export default function Hero({ records }: { records: AccidentRecord[] }) {
   const fatalCount = records.filter((r) => r.fatal).length;
+  const totalCount = records.length; // all accidents (injuries + fatalities)
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -61,32 +62,39 @@ export default function Hero({ records }: { records: AccidentRecord[] }) {
           01 — The Problem
         </p>
 
-        {/* Big fatal stat */}
-        <div className="section-fade" style={{ marginBottom: "32px" }}>
-          <div className="display-xl" style={{ lineHeight: 1 }}>
-            <AnimatedCounter target={fatalCount} />
+        {/* Stats row */}
+        <div className="section-fade" style={{ marginBottom: "32px", display: "flex", alignItems: "flex-start", gap: "48px" }}>
+          {/* Fatal stat */}
+          <div>
+            <div className="display-xl" style={{ lineHeight: 1, fontSize: "clamp(56px, 8vw, 96px)" }}>
+              <AnimatedCounter target={fatalCount} />
+            </div>
+            <p style={{ fontSize: "13px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#555", marginTop: "12px", fontWeight: 500 }}>
+              fatal mining incidents in the last decade
+            </p>
           </div>
-          <p
-            style={{
-              fontSize: "13px",
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "#555",
-              marginTop: "12px",
-              fontWeight: 500,
-            }}
-          >
-            fatal mining incidents in the last decade
-          </p>
+
+          {/* Vertical divider */}
+          <div style={{ width: "1px", background: "rgba(255,255,255,0.08)", alignSelf: "stretch", marginTop: "8px" }} />
+
+          {/* Total accidents stat */}
+          <div>
+            <div className="display-xl" style={{ lineHeight: 1, fontSize: "clamp(56px, 8vw, 96px)" }}>
+              <AnimatedCounter target={totalCount} />
+            </div>
+            <p style={{ fontSize: "13px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#555", marginTop: "12px", fontWeight: 500 }}>
+              total recorded mining accidents in the last decade
+            </p>
+          </div>
         </div>
 
         {/* Thesis */}
         <div className="section-fade" style={{ marginBottom: "64px" }}>
           <p
             className="display-lg"
-            style={{ marginBottom: "16px", maxWidth: "720px" }}
+            style={{ marginBottom: "16px", maxWidth: "720px", fontSize: "clamp(36px, 5.5vw, 64px)" }}
           >
-            Every year, miners die in preventable accidents.
+            Every year, miners get injured or die in preventable accidents.
           </p>
           <p
             style={{

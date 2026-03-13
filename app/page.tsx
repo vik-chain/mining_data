@@ -1,26 +1,16 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { loadAccidents, type AccidentRecord } from "@/lib/csvLoader";
 import NavBar from "@/components/NavBar";
 import Hero from "@/components/Hero";
 import FatalityExplorer from "@/components/FatalityExplorer";
-import RiskScoreCalculator, {
-  type RiskDrivers,
-} from "@/components/RiskScoreCalculator";
-import InspectionSimulator from "@/components/InspectionSimulator";
+import RiskScoreCalculator from "@/components/RiskScoreCalculator";
 import PreventionPanel from "@/components/PreventionPanel";
-import FutureSection from "@/components/FutureSection";
+import MockDashboard from "@/components/MockDashboard";
 import MineRiskMap from "@/components/MineRiskMap";
 import FutureSafetyNetwork from "@/components/FutureSafetyNetwork";
 import FixedArrow from "@/components/FixedArrow";
-
-const DEFAULT_DRIVERS: RiskDrivers = {
-  accidents: 5,
-  ssViolations: 10,
-  hasHaulage: false,
-  isUnderground: false,
-};
 
 function SkeletonLoader() {
   return (
@@ -62,7 +52,6 @@ function SkeletonLoader() {
 export default function Home() {
   const [records, setRecords] = useState<AccidentRecord[]>([]);
   const [loading, setLoading] = useState(true);
-  const [riskDrivers, setRiskDrivers] = useState<RiskDrivers>(DEFAULT_DRIVERS);
 
   // Load CSV data
   useEffect(() => {
@@ -99,10 +88,6 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [loading]);
 
-  const handleDriversChange = useCallback((drivers: RiskDrivers) => {
-    setRiskDrivers(drivers);
-  }, []);
-
   if (loading) return <SkeletonLoader />;
 
   return (
@@ -112,12 +97,11 @@ export default function Home() {
 
       <Hero records={records} />
       <FatalityExplorer records={records} />
-      <RiskScoreCalculator onDriversChange={handleDriversChange} />
+      <RiskScoreCalculator />
       <MineRiskMap records={records} />
-      <InspectionSimulator />
-      <PreventionPanel riskDrivers={riskDrivers} />
-      <FutureSection />
+      <PreventionPanel />
       <FutureSafetyNetwork />
+      <MockDashboard records={records} />
 
       <section
         id="closing"

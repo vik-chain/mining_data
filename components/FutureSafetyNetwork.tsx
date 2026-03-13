@@ -222,7 +222,7 @@ export default function FutureSafetyNetwork() {
 
       <div className="content-wrap">
         <p className="section-label section-fade" style={{ marginBottom: "24px" }}>
-          08 — Future Direction
+          06 — Future Direction
         </p>
 
         <p

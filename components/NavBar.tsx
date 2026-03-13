@@ -7,10 +7,9 @@ const sections = [
   { id: "data", label: "Data" },
   { id: "risk", label: "Risk" },
   { id: "map", label: "Map" },
-  { id: "inspection", label: "Inspect" },
-  { id: "prevention", label: "Prevent" },
-  { id: "future", label: "Solution" },
+  { id: "prevention", label: "Solutions" },
   { id: "network", label: "Network" },
+  { id: "dashboard", label: "Dashboard" },
 ];
 
 export default function NavBar() {

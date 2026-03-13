@@ -48,7 +48,7 @@ function getRiskLevel(score: number) {
 export default function RiskScoreCalculator({
   onDriversChange,
 }: {
-  onDriversChange: (drivers: RiskDrivers) => void;
+  onDriversChange?: (drivers: RiskDrivers) => void;
 }) {
   const [accidents, setAccidents] = useState(5);
   const [ssViolations, setSsViolations] = useState(10);
@@ -75,7 +75,7 @@ export default function RiskScoreCalculator({
     .sort((a, b) => b.value - a.value);
 
   useEffect(() => {
-    onDriversChange({ accidents, ssViolations, hasHaulage, isUnderground });
+    onDriversChange?.({ accidents, ssViolations, hasHaulage, isUnderground });
   }, [accidents, ssViolations, hasHaulage, isUnderground, onDriversChange]);
 
   return (
